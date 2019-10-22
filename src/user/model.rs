@@ -1,23 +1,23 @@
+#![allow(proc_macro_derive_resolution_fallback)]
 use diesel;
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
-use user::schema::users;
+use super::schema::users;
 
+
+#[derive(Serialize, Deserialize, Queryable, AsChangeset)]
 #[table_name = "users"]
-#[derive(Serialize, Deserialize, Queryable, Insertable, AsChangeset)]
 pub struct User {
-    pub id: Option<i32>,
-    pub name: String,
+    pub id: i32,
+    pub username: String,
     pub password: String
 }
 
 impl User {
     pub fn create(user: User, connection: &PgConnection) -> QueryResult<User> {
         diesel::insert_into(users::table)
-            .values(&user)
-            .execute(connection)?;
-
-        users::table.order(users::id.desc()).first(connection)
+            .values(&InsertablePerson::from_person(user))
+            .get_result(connection)
     }
 
     pub fn read(id: i32, connection: &PgConnection) -> QueryResult<Vec<User>> {
@@ -30,7 +30,7 @@ impl User {
 
     pub fn by_username_and_password(username_: String, password_: String, connection: &PgConnection) -> Option<User> {
         let res = users::table
-            .filter(users::name.eq(username_))
+            .filter(users::username.eq(username_))
             .filter(users::password.eq(password_))
             .order(users::id)
             .first(connection);
@@ -48,5 +48,21 @@ impl User {
 
     pub fn delete(id: i32, connection: &PgConnection) -> bool {
         diesel::delete(users::table.find(id)).execute(connection).is_ok()
+    }
+}
+
+#[derive(Insertable)]
+#[table_name = "users"]
+struct InsertablePerson {
+    username: String,
+    password: String,
+}
+
+impl InsertablePerson {
+    fn from_person(user: User) -> InsertablePerson {
+        InsertablePerson {
+            username: user.username,
+            password: user.password,
+        }
     }
 }

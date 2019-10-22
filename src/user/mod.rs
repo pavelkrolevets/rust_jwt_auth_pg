@@ -2,28 +2,34 @@ pub mod model;
 pub mod schema;
 pub mod auth;
 
-use rocket::{self, http::Status};
-use rocket_contrib::{Json, Value};
+use rocket::*;
+use rocket::http::Status;
+use rocket::response::status;
+use rocket_contrib::json::Json;
+use rocket_contrib::json::JsonValue;
+use diesel::result::Error;
 use self::model::User;
-use db;
+use super::db;
 use self::auth::ApiKey;
-use self::auth::crypto::sha2::Sha256;
+use crypto::sha2::Sha256;
 use self::auth::jwt::{
     Header,
     Registered,
     Token,
 };
+use std::env;
 
-#[post("/", data = "<user>")]
-fn create(user: Json<User>, connection: db::Connection) -> Result<Json<User>, Status> {
-    let insert = User { id: None, ..user.into_inner() };
-    User::create(insert, &connection)
-        .map(Json)
-        .map_err(|_| Status::InternalServerError)
+
+#[post("/", format = "application/json", data = "<user>")]
+fn create(user: Json<User>, connection: db::Connection) -> Result<status::Created<Json<User>>, Status> {
+//    let insert = User { ..user.into_inner() };
+    User::create(user.into_inner(), &connection)
+        .map(|user| person_created(user))
+        .map_err(|error| error_status(error))
 }
 
 #[get("/info")]
-fn info(key: ApiKey) -> Json<Value> {
+fn info(key: ApiKey) -> Json<JsonValue> {
     Json(json!(
         {
             "success": true,
@@ -33,7 +39,7 @@ fn info(key: ApiKey) -> Json<Value> {
 }
 
 #[get("/info", rank = 2)]
-fn info_error() -> Json<Value> {
+fn info_error() -> Json<JsonValue> {
     Json(json!(
         {
             "success": false,
@@ -43,14 +49,14 @@ fn info_error() -> Json<Value> {
 }
 
 #[get("/")]
-fn read(_key: ApiKey, connection: db::Connection) -> Result<Json<Value>, Status> {
+fn read(_key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
     User::read(0, &connection)
         .map(|item| Json(json!(item)))
         .map_err(|_| Status::NotFound)
 }
 
 #[get("/", rank = 2)]
-fn read_error() -> Json<Value> {
+fn read_error() -> Json<JsonValue> {
     Json(json!(
         {
             "success": false,
@@ -60,22 +66,22 @@ fn read_error() -> Json<Value> {
 }
 
 #[get("/<id>")]
-fn read_one(id: i32, connection: db::Connection) -> Result<Json<Value>, Status> {
+fn read_one(id: i32, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
     User::read(id, &connection)
         .map(|item| Json(json!(item)))
         .map_err(|_| Status::NotFound)
 }
 
 #[put("/<id>", data = "<user>")]
-fn update(id: i32, user: Json<User>, connection: db::Connection) -> Json<Value> {
-    let update = User { id: Some(id), ..user.into_inner() };
+fn update(id: i32, user: Json<User>, connection: db::Connection) -> Json<JsonValue> {
+    let update = User {  ..user.into_inner() };
     Json(json!({
         "success": User::update(id, update, &connection)
     }))
 }
 
 #[delete("/<id>")]
-fn delete(id: i32, connection: db::Connection) -> Json<Value> {
+fn delete(id: i32, connection: db::Connection) -> Json<JsonValue> {
     Json(json!({
         "success": User::delete(id, &connection)
     }))
@@ -93,7 +99,7 @@ struct Credentials {
 }
 
 #[post("/login", data = "<credentials>")]
-fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<Json<Value>, Status> {
+fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<Json<JsonValue>, Status> {
     let header: Header = Default::default();
     let username = credentials.username.to_string();
     let password = credentials.password.to_string();
@@ -104,7 +110,7 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
         },
         Some(user) => {
             let claims = Registered {
-                sub: Some(user.name.into()),
+                sub: Some(user.username.into()),
                 ..Default::default()
             };
             let token = Token::new(header, claims);
@@ -120,4 +126,25 @@ pub fn mount(rocket: rocket::Rocket) -> rocket::Rocket {
     rocket
         .mount("/user", routes![read, read_error, read_one, create, update, delete, info, info_error])
         .mount("/auth", routes![login])
+}
+
+fn person_created(user: User) -> status::Created<Json<User>> {
+    status::Created(
+        format!("{host}:{port}/user/{id}", host = host(), port = port(), id = user.id).to_string(),
+        Some(Json(user)))
+}
+
+fn error_status(error: Error) -> Status {
+    match error {
+        Error::NotFound => Status::NotFound,
+        _ => Status::InternalServerError
+    }
+}
+
+fn host() -> String {
+    env::var("ROCKET_ADDRESS").expect("ROCKET_ADDRESS must be set")
+}
+
+fn port() -> String {
+    env::var("ROCKET_PORT").expect("ROCKET_PORT must be set")
 }
