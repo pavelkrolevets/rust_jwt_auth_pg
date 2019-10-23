@@ -16,7 +16,7 @@ pub struct User {
 impl User {
     pub fn create(user: User, connection: &PgConnection) -> QueryResult<User> {
         diesel::insert_into(users::table)
-            .values(&InsertablePerson::from_person(user))
+            .values(&InsertableUser::from_user(user))
             .get_result(connection)
     }
 
@@ -53,14 +53,14 @@ impl User {
 
 #[derive(Insertable)]
 #[table_name = "users"]
-struct InsertablePerson {
+struct InsertableUser {
     username: String,
     password: String,
 }
 
-impl InsertablePerson {
-    fn from_person(user: User) -> InsertablePerson {
-        InsertablePerson {
+impl InsertableUser {
+    fn from_user(user: User) -> InsertableUser {
+        InsertableUser {
             username: user.username,
             password: user.password,
         }

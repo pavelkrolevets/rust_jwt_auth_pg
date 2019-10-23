@@ -18,9 +18,10 @@ use self::auth::jwt::{
     Token,
 };
 use std::env;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 
-#[post("/", format = "application/json", data = "<user>")]
+#[post("/register", format = "application/json", data = "<user>")]
 fn create(user: Json<User>, connection: db::Connection) -> Result<status::Created<Json<User>>, Status> {
 //    let insert = User { ..user.into_inner() };
     User::create(user.into_inner(), &connection)
@@ -103,13 +104,19 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
     let header: Header = Default::default();
     let username = credentials.username.to_string();
     let password = credentials.password.to_string();
-    
-    match User::by_username_and_password(username, password, &connection) {
+    // Expiration of the token is set to two weeks
+    let start = SystemTime::now();
+    let since_the_epoch = start.duration_since(UNIX_EPOCH)
+        .expect("Time went backwards");
+    let two_weeks_from_now: u64 = since_the_epoch.as_secs() + 1209600 as u64;
+
+        match User::by_username_and_password(username, password, &connection) {
         None => {
             Err(Status::NotFound)
         },
         Some(user) => {
             let claims = Registered {
+                exp: Some(two_weeks_from_now),
                 sub: Some(user.username.into()),
                 ..Default::default()
             };
