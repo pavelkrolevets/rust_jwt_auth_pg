@@ -11,14 +11,11 @@ use diesel::result::Error;
 use self::model::User;
 use super::db;
 use self::auth::ApiKey;
-use crypto::sha2::Sha256;
-use self::auth::jwt::{
-    Header,
-    Registered,
-    Token,
-};
+
+use jwt::{Header, Registered, Token};
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
+use crypto::sha2::Sha256;
 
 
 #[post("/register", format = "application/json", data = "<user>")]

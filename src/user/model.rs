@@ -3,6 +3,7 @@ use diesel;
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use super::schema::users;
+use scrypt::{ScryptParams, scrypt_simple, scrypt_check};
 
 
 #[derive(Serialize, Deserialize, Queryable, AsChangeset)]
@@ -54,15 +55,22 @@ impl User {
 #[derive(Insertable)]
 #[table_name = "users"]
 struct InsertableUser {
+    id: i32,
     username: String,
     password: String,
 }
 
 impl InsertableUser {
+
     fn from_user(user: User) -> InsertableUser {
+        let params = ScryptParams::new(15, 8, 1).unwrap();
+        let hashed_password = scrypt_simple(&user.password, &params)
+            .expect("OS RNG should not fail");
+
         InsertableUser {
+            id: user.id,
             username: user.username,
-            password: user.password,
+            password: hashed_password,
         }
     }
 }

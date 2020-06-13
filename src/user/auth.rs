@@ -1,17 +1,9 @@
 use rocket::Outcome;
 use rocket::request::{self, Request, FromRequest};
 
-pub extern crate crypto;
-pub extern crate jwt;
-pub extern crate rustc_serialize;
-
 use crypto::sha2::Sha256;
 
-use self::jwt::{
-    Header,
-    Registered,
-    Token,
-};
+use jwt::{Header, Registered, Token};
 
 
 pub struct ApiKey(pub String);
