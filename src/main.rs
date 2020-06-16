@@ -9,6 +9,8 @@
 extern crate dotenv;
 extern crate r2d2;
 extern crate r2d2_diesel;
+extern crate secstr;
+extern crate argon2;
 
 #[macro_use]
 extern crate serde_derive;

@@ -13,7 +13,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="076d6fc9-e5a3-4a57-b497-684f3780db32" name="Default" comment="fix: save hashed passwords">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/auth.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/auth.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/model.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/model.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,8 +72,12 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
+    <property name="org.rust.hideDetachedFileNotifications/Users/pavelkrolevets/Projects/rust_jwt_auth/src/db.rs" value="true" />
+    <property name="org.rust.hideDetachedFileNotifications/Users/pavelkrolevets/Projects/rust_jwt_auth/src/main.rs" value="true" />
     <property name="org.rust.hideDetachedFileNotifications/Users/pavelkrolevets/Projects/rust_jwt_auth/src/user/auth.rs" value="true" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="org.rust.hideDetachedFileNotifications/Users/pavelkrolevets/Projects/rust_jwt_auth/src/user/mod.rs" value="true" />
+    <property name="org.rust.hideDetachedFileNotifications/Users/pavelkrolevets/Projects/rust_jwt_auth/src/user/model.rs" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -102,7 +112,8 @@
       <workItem from="1571903959247" duration="18000" />
       <workItem from="1571904004738" duration="8691000" />
       <workItem from="1592050966788" duration="44000" />
-      <workItem from="1592051062120" duration="357000" />
+      <workItem from="1592051062120" duration="5091000" />
+      <workItem from="1592212265695" duration="4776000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1568974971680</created>
@@ -164,9 +175,17 @@
     <option name="LAST_COMMIT_MESSAGE" value="fix: edition cant be 2019" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2269" y="164" key="SettingsEditor" timestamp="1592051458133">
+    <state x="2150" y="361" key="#SQL_Dialects" timestamp="1592055768391">
       <screen x="1920" y="0" width="1680" height="1050" />
     </state>
-    <state x="2269" y="164" key="SettingsEditor/1920.0.1680.1050/0.0.1920.1080@1920.0.1680.1050" timestamp="1592051458133" />
+    <state x="2150" y="361" key="#SQL_Dialects/1920.0.1680.1050/0.0.1920.1080@1920.0.1680.1050" timestamp="1592055768391" />
+    <state x="2360" y="190" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592056420830">
+      <screen x="1920" y="0" width="1680" height="1050" />
+    </state>
+    <state x="2360" y="190" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1680.1050/0.0.1920.1080@1920.0.1680.1050" timestamp="1592056420830" />
+    <state x="2269" y="164" key="SettingsEditor" timestamp="1592053749714">
+      <screen x="1920" y="0" width="1680" height="1050" />
+    </state>
+    <state x="2269" y="164" key="SettingsEditor/1920.0.1680.1050/0.0.1920.1080@1920.0.1680.1050" timestamp="1592053749714" />
   </component>
 </project>

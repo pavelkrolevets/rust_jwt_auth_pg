@@ -30,9 +30,12 @@ impl User {
     }
 
     pub fn by_username_and_password(username_: String, password_: String, connection: &PgConnection) -> Option<User> {
+        let params = ScryptParams::new(15, 8, 1).unwrap();
+        let hashed_password = scrypt_simple(&user.password, &params)
+            .expect("OS RNG should not fail");
         let res = users::table
             .filter(users::username.eq(username_))
-            .filter(users::password.eq(password_))
+            .filter(users::password.eq(hashed_password))
             .order(users::id)
             .first(connection);
         match res {
@@ -66,7 +69,7 @@ impl InsertableUser {
         let params = ScryptParams::new(15, 8, 1).unwrap();
         let hashed_password = scrypt_simple(&user.password, &params)
             .expect("OS RNG should not fail");
-
+        println!("Hashed password {:?}", &hashed_password);
         InsertableUser {
             id: user.id,
             username: user.username,

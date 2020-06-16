@@ -20,7 +20,6 @@ pub fn read_token(key: &str) -> Result<String, String> {
 
 impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
     type Error = ();
-
     fn from_request(request: &'a Request<'r>) -> request::Outcome<ApiKey, ()> {
         let keys: Vec<_> = request.headers().get("Authentication").collect();
         if keys.len() != 1 {
