@@ -46,32 +46,15 @@ fn info_error() -> Json<JsonValue> {
     ))
 }
 
-#[get("/")]
-fn read(_key: ApiKey, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
-    User::read(0, &connection)
-        .map(|item| Json(json!(item)))
-        .map_err(|_| Status::NotFound)
-}
-
-#[get("/", rank = 2)]
-fn read_error() -> Json<JsonValue> {
-    Json(json!(
-        {
-            "success": false,
-            "message": "Not authorized"
-        }
-    ))
-}
-
 #[get("/<id>")]
-fn read_one(id: i32, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
+fn read_one(_key: ApiKey, id: String, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
     User::read(id, &connection)
         .map(|item| Json(json!(item)))
         .map_err(|_| Status::NotFound)
 }
 
 #[put("/<id>", data = "<user>")]
-fn update(id: i32, user: Json<User>, connection: db::Connection) -> Json<JsonValue> {
+fn update(id: String, user: Json<User>, connection: db::Connection) -> Json<JsonValue> {
     let update = User {  ..user.into_inner() };
     Json(json!({
         "success": User::update(id, update, &connection)
@@ -79,7 +62,7 @@ fn update(id: i32, user: Json<User>, connection: db::Connection) -> Json<JsonVal
 }
 
 #[delete("/<id>")]
-fn delete(id: i32, connection: db::Connection) -> Json<JsonValue> {
+fn delete(id: String, connection: db::Connection) -> Json<JsonValue> {
     Json(json!({
         "success": User::delete(id, &connection)
     }))
@@ -114,7 +97,7 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
         Some(user) => {
             let claims = Registered {
                 exp: Some(two_weeks_from_now),
-                sub: Some(user.username.into()),
+                sub: Some(user.id.into()),
                 ..Default::default()
             };
             let token = Token::new(header, claims);
@@ -128,13 +111,13 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
 
 pub fn mount(rocket: rocket::Rocket) -> rocket::Rocket {
     rocket
-        .mount("/user", routes![read, read_error, read_one, create, update, delete, info, info_error])
+        .mount("/user", routes![read_one,  create, update, delete, info, info_error])
         .mount("/auth", routes![login])
 }
 
 fn person_created(user: User) -> status::Created<Json<User>> {
     status::Created(
-        format!("{host}:{port}/user/{id}", host = host(), port = port(), id = user.id).to_string(),
+        format!("{host}:{port}/user/{name}", host = host(), port = port(), name = user.id).to_string(),
         Some(Json(user)))
 }
 

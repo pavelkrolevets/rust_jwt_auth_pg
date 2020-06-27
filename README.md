@@ -1,6 +1,7 @@
 ## Rust rocket.rs + diesel.rs ORM + Postgresql  - restful JWT auth API boilerplate
 
 An example how to set up Rust server restful API with JWT authentication and ORM under the hood.
+User passwords are db stored in the hash form ([argon2](https://crates.io/crates/rust-argon2))
 
 ## Requirements
 
@@ -21,11 +22,22 @@ An example how to set up Rust server restful API with JWT authentication and ORM
     ```bash
     diesel migration run
     ``` 
-2. Compile the code setting the DATABASE_URL environment variable
+2. Compile the code and run
     ```bash
-       cargo run
+    cargo run
     ```
 ###### If everything was installed right and compiles without errors you should see Rocekt server listening at http://localhost:8001
+
+## API rout JWT protection
+
+Routs can be protected through JWT check in the message Header
+
+```rust
+#[get("/sensitive")]
+fn sensitive(key: ApiKey) -> String {
+    format!("Hello, you have been identified as {}", key.0)
+}
+```
 
 ## API
 
@@ -54,12 +66,14 @@ curl -X POST \
 }'
 ```
 ### /user
-Call a protected route (use the token returned from the /auth/login API)
+Call a protected route with a JWT in the HEADER `authentication` (use the token returned from the /auth/login API)
 ```bash
 curl -X GET \
   http://localhost:8001/user \
   -H 'authentication: eyJ0eXAiOiJKV1QiLCJraWQiOm51bGwsImFsZyI6IkhTMjU2In0.eyJpc3MiOm51bGwsInN1YiI6InRlc3QiLCJhdWQiOm51bGwsImV4cCI6MTU3MzAyNzg5MSwibmJmIjpudWxsLCJpYXQiOm51bGwsImp0aSI6bnVsbH0.DJ5tb/ic91oULyMjZMeam9kMU31sxGSxSnTmTppUhdA'
 ```
+
+
 
 ## Based on previous work: 
 1. https://github.com/marcocastignoli/rust_rocket_api_authentication

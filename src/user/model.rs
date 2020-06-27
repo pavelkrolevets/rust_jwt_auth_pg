@@ -3,14 +3,12 @@ use diesel;
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use super::schema::users;
-use scrypt::{ScryptParams, scrypt_simple, scrypt_check};
-
+use argon2::{self, Config};
 
 #[derive(Serialize, Deserialize, Queryable, AsChangeset)]
 #[table_name = "users"]
 pub struct User {
-    pub id: i32,
-    pub username: String,
+    pub id: String,
     pub password: String
 }
 
@@ -21,8 +19,8 @@ impl User {
             .get_result(connection)
     }
 
-    pub fn read(id: i32, connection: &PgConnection) -> QueryResult<Vec<User>> {
-        if id != 0 {
+    pub fn read(id: String, connection: &PgConnection) -> QueryResult<Vec<User>> {
+        if id != "".to_string() {
             users::table.find(id).load::<User>(connection)
         } else {
             users::table.order(users::id).load::<User>(connection)
@@ -30,12 +28,13 @@ impl User {
     }
 
     pub fn by_username_and_password(username_: String, password_: String, connection: &PgConnection) -> Option<User> {
-        let params = ScryptParams::new(15, 8, 1).unwrap();
-        let hashed_password = scrypt_simple(&user.password, &params)
-            .expect("OS RNG should not fail");
+        let salt = b"somesalt";
+        let config = Config::default();
+        let hash = argon2::hash_encoded(&password_.as_bytes(), salt, &config).unwrap();
+        println!("Hashed password {:?}", &hash);
         let res = users::table
-            .filter(users::username.eq(username_))
-            .filter(users::password.eq(hashed_password))
+            .filter(users::id.eq(username_))
+            .filter(users::password.eq(hash))
             .order(users::id)
             .first(connection);
         match res {
@@ -46,11 +45,11 @@ impl User {
         }
     }
 
-    pub fn update(id: i32, user: User, connection: &PgConnection) -> bool {
+    pub fn update(id: String, user: User, connection: &PgConnection) -> bool {
         diesel::update(users::table.find(id)).set(&user).execute(connection).is_ok()
     }
 
-    pub fn delete(id: i32, connection: &PgConnection) -> bool {
+    pub fn delete(id: String, connection: &PgConnection) -> bool {
         diesel::delete(users::table.find(id)).execute(connection).is_ok()
     }
 }
@@ -58,22 +57,19 @@ impl User {
 #[derive(Insertable)]
 #[table_name = "users"]
 struct InsertableUser {
-    id: i32,
-    username: String,
+    id: String,
     password: String,
 }
 
 impl InsertableUser {
 
     fn from_user(user: User) -> InsertableUser {
-        let params = ScryptParams::new(15, 8, 1).unwrap();
-        let hashed_password = scrypt_simple(&user.password, &params)
-            .expect("OS RNG should not fail");
-        println!("Hashed password {:?}", &hashed_password);
+        let salt = b"somesalt";
+        let config = Config::default();
+        let hash = argon2::hash_encoded(&user.password.as_bytes(), salt, &config).unwrap();
         InsertableUser {
             id: user.id,
-            username: user.username,
-            password: hashed_password,
+            password: hash,
         }
     }
 }
