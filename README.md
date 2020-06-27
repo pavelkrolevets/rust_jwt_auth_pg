@@ -1,7 +1,8 @@
 ## Rust rocket.rs + diesel.rs ORM + Postgresql  - restful JWT auth API boilerplate
 
 An example how to set up Rust server restful API with JWT authentication and ORM under the hood.
-User passwords are db stored in the hash form ([argon2](https://crates.io/crates/rust-argon2))
+
+- User passwords hashed ([argon2](https://crates.io/crates/rust-argon2))
 
 ## Requirements
 

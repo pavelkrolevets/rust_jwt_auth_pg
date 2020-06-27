@@ -68,10 +68,10 @@ fn delete(id: String, connection: db::Connection) -> Json<JsonValue> {
     }))
 }
 
-/* #[get("/sensitive")]
+#[get("/sensitive")]
 fn sensitive(key: ApiKey) -> String {
     format!("Hello, you have been identified as {}", key.0)
-} */
+}
 
 #[derive(Serialize, Deserialize)]
 struct Credentials {
@@ -111,7 +111,7 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
 
 pub fn mount(rocket: rocket::Rocket) -> rocket::Rocket {
     rocket
-        .mount("/user", routes![read_one,  create, update, delete, info, info_error])
+        .mount("/user", routes![read_one,  create, update, delete, info, info_error, sensitive])
         .mount("/auth", routes![login])
 }
 

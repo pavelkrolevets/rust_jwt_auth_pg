@@ -14,13 +14,7 @@
   <component name="ChangeListManager">
     <list default="true" id="076d6fc9-e5a3-4a57-b497-684f3780db32" name="Default" comment="fix: save hashed passwords">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/2019-10-22-075101_users/up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/2019-10-22-075101_users/up.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/user/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/user/model.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/model.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/user/schema.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/schema.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,7 +112,8 @@
       <workItem from="1592051062120" duration="5091000" />
       <workItem from="1592212265695" duration="4776000" />
       <workItem from="1593243755908" duration="87000" />
-      <workItem from="1593243876187" duration="9314000" />
+      <workItem from="1593243876187" duration="9488000" />
+      <workItem from="1593278105603" duration="347000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1568974971680</created>
