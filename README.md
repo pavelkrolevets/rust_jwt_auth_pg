@@ -49,8 +49,7 @@ fn sensitive(key: ApiKey) -> String {
 curl -X POST \
   http://localhost:8001/user/register \
   -H 'content-type: application/json' \
-  -d '{ "id": 0,
-        "username": "test",
+  -d '{ "id": "test",
         "password": "12345"
 }'
 ```
@@ -61,8 +60,7 @@ Get a jwt token for the user
 curl -X POST \
   http://localhost:8001/auth/login \
   -H 'content-type: application/json' \
-  -d '{
-        "username": "test",
+  -d '{ "id": "test",
         "password": "12345"
 }'
 ```
@@ -70,7 +68,7 @@ curl -X POST \
 Call a protected route with a JWT in the HEADER `authentication` (use the token returned from the /auth/login API)
 ```bash
 curl -X GET \
-  http://localhost:8001/user \
+  http://localhost:8001/user/sensitive \
   -H 'authentication: eyJ0eXAiOiJKV1QiLCJraWQiOm51bGwsImFsZyI6IkhTMjU2In0.eyJpc3MiOm51bGwsInN1YiI6InRlc3QiLCJhdWQiOm51bGwsImV4cCI6MTU3MzAyNzg5MSwibmJmIjpudWxsLCJpYXQiOm51bGwsImp0aSI6bnVsbH0.DJ5tb/ic91oULyMjZMeam9kMU31sxGSxSnTmTppUhdA'
 ```
 

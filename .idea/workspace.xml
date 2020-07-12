@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated />
   </component>
@@ -14,7 +32,9 @@
   <component name="ChangeListManager">
     <list default="true" id="076d6fc9-e5a3-4a57-b497-684f3780db32" name="Default" comment="fix: save hashed passwords">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/mod.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,15 +50,6 @@
         <option value="Rust File" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>rocket_codegen</find>
-      <find>Token</find>
-    </findStrings>
-    <dirStrings>
-      <dir>$PROJECT_DIR$</dir>
-    </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
@@ -113,7 +124,9 @@
       <workItem from="1592212265695" duration="4776000" />
       <workItem from="1593243755908" duration="87000" />
       <workItem from="1593243876187" duration="9488000" />
-      <workItem from="1593278105603" duration="347000" />
+      <workItem from="1593278105603" duration="3838000" />
+      <workItem from="1594500535546" duration="1491000" />
+      <workItem from="1594555923174" duration="814000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1568974971680</created>
@@ -166,6 +179,18 @@
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.env" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="add: JWT auth" />
@@ -188,5 +213,9 @@
     </state>
     <state x="299" y="141" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1593243849745" />
     <state x="2269" y="164" key="SettingsEditor/1920.0.1680.1050/0.0.1920.1080@1920.0.1680.1050" timestamp="1592053749714" />
+    <state x="426" y="85" width="588" height="729" key="find.popup" timestamp="1593356170724">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="426" y="85" width="588" height="729" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1593356170724" />
   </component>
 </project>

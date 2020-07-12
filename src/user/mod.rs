@@ -75,14 +75,14 @@ fn sensitive(key: ApiKey) -> String {
 
 #[derive(Serialize, Deserialize)]
 struct Credentials {
-   username: String,
+   id: String,
    password: String
 }
 
 #[post("/login", data = "<credentials>")]
 fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<Json<JsonValue>, Status> {
     let header: Header = Default::default();
-    let username = credentials.username.to_string();
+    let username = credentials.id.to_string();
     let password = credentials.password.to_string();
     // Expiration of the token is set to two weeks
     let start = SystemTime::now();
