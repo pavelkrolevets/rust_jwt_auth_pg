@@ -32,9 +32,6 @@
   <component name="ChangeListManager">
     <list default="true" id="076d6fc9-e5a3-4a57-b497-684f3780db32" name="Default" comment="fix: save hashed passwords">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/user/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/mod.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +123,9 @@
       <workItem from="1593243876187" duration="9488000" />
       <workItem from="1593278105603" duration="3838000" />
       <workItem from="1594500535546" duration="1491000" />
-      <workItem from="1594555923174" duration="814000" />
+      <workItem from="1594555923174" duration="1047000" />
+      <workItem from="1596607362882" duration="681000" />
+      <workItem from="1596609039302" duration="5888000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1568974971680</created>

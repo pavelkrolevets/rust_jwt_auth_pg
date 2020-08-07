@@ -1,4 +1,4 @@
-## Rust rocket.rs + diesel.rs ORM + Postgresql  - restful JWT auth API boilerplate
+## Rocket.rs + diesel.rs + Postgresql  - restful JWT auth API boilerplate
 
 An example how to set up Rust server restful API with JWT authentication and ORM under the hood.
 
