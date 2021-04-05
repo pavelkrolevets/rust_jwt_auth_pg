@@ -49,7 +49,7 @@ fn sensitive(key: ApiKey) -> String {
 curl -X POST \
   http://localhost:8001/user/register \
   -H 'content-type: application/json' \
-  -d '{ "id": "test",
+  -d '{ "email": "some@email.com",
         "password": "12345"
 }'
 ```
@@ -60,7 +60,7 @@ Get a jwt token for the user
 curl -X POST \
   http://localhost:8001/auth/login \
   -H 'content-type: application/json' \
-  -d '{ "id": "test",
+  -d '{ "email": "some@email.com",
         "password": "12345"
 }'
 ```

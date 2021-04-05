@@ -1,5 +1,5 @@
 #![allow(proc_macro_derive_resolution_fallback)]
-use diesel;
+use diesel::{self};
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use super::schema::users;
@@ -8,8 +8,9 @@ use argon2::{self, Config};
 #[derive(Serialize, Deserialize, Queryable, AsChangeset)]
 #[table_name = "users"]
 pub struct User {
-    pub id: String,
-    pub password: String
+    pub id: uuid::Uuid,
+    pub password: String,
+    pub email: String,
 }
 
 impl User {
@@ -19,21 +20,21 @@ impl User {
             .get_result(connection)
     }
 
-    pub fn read(id: String, connection: &PgConnection) -> QueryResult<Vec<User>> {
-        if id != "".to_string() {
+    pub fn read(id: uuid::Uuid, connection: &PgConnection) -> QueryResult<Vec<User>> {
+        if id.to_string() != "".to_string() {
             users::table.find(id).load::<User>(connection)
         } else {
             users::table.order(users::id).load::<User>(connection)
         }
     }
 
-    pub fn by_username_and_password(username_: String, password_: String, connection: &PgConnection) -> Option<User> {
+    pub fn by_email_and_password(email: String, password_: String, connection: &PgConnection) -> Option<User> {
         let salt = b"somesalt";
         let config = Config::default();
         let hash = argon2::hash_encoded(&password_.as_bytes(), salt, &config).unwrap();
         println!("Hashed password {:?}", &hash);
         let res = users::table
-            .filter(users::id.eq(username_))
+            .filter(users::email.eq(email))
             .filter(users::password.eq(hash))
             .order(users::id)
             .first(connection);
@@ -45,11 +46,11 @@ impl User {
         }
     }
 
-    pub fn update(id: String, user: User, connection: &PgConnection) -> bool {
+    pub fn update(id: uuid::Uuid, user: User, connection: &PgConnection) -> bool {
         diesel::update(users::table.find(id)).set(&user).execute(connection).is_ok()
     }
 
-    pub fn delete(id: String, connection: &PgConnection) -> bool {
+    pub fn delete(id: uuid::Uuid, connection: &PgConnection) -> bool {
         diesel::delete(users::table.find(id)).execute(connection).is_ok()
     }
 }
@@ -57,8 +58,9 @@ impl User {
 #[derive(Insertable)]
 #[table_name = "users"]
 struct InsertableUser {
-    id: String,
+    id: uuid::Uuid,
     password: String,
+    email: String,
 }
 
 impl InsertableUser {
@@ -69,7 +71,8 @@ impl InsertableUser {
         let hash = argon2::hash_encoded(&user.password.as_bytes(), salt, &config).unwrap();
         InsertableUser {
             id: user.id,
-            password: hash,
+            email: user.email,
+            password: hash
         }
     }
 }

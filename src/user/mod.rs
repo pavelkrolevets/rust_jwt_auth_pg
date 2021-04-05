@@ -16,12 +16,18 @@ use jwt::{Header, Registered, Token};
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 use crypto::sha2::Sha256;
+use uuid::Uuid;
+use std::str;
 
 
-#[post("/register", format = "application/json", data = "<user>")]
-fn create(user: Json<User>, connection: db::Connection) -> Result<status::Created<Json<User>>, Status> {
-//    let insert = User { ..user.into_inner() };
-    User::create(user.into_inner(), &connection)
+#[post("/register", format = "application/json", data = "<credentials>")]
+fn create(credentials: Json<Credentials>, connection: db::Connection) -> Result<status::Created<Json<User>>, Status> {
+   let insert = User { 
+       id: Uuid::new_v4(),
+       email: credentials.email.to_string(),
+       password: credentials.password.to_string()
+ };
+    User::create(insert, &connection)
         .map(|user| person_created(user))
         .map_err(|error| error_status(error))
 }
@@ -48,7 +54,7 @@ fn info_error() -> Json<JsonValue> {
 
 #[get("/<id>")]
 fn read_one(_key: ApiKey, id: String, connection: db::Connection) -> Result<Json<JsonValue>, Status> {
-    User::read(id, &connection)
+    User::read(Uuid::parse_str(&id).unwrap(), &connection)
         .map(|item| Json(json!(item)))
         .map_err(|_| Status::NotFound)
 }
@@ -57,14 +63,14 @@ fn read_one(_key: ApiKey, id: String, connection: db::Connection) -> Result<Json
 fn update(id: String, user: Json<User>, connection: db::Connection) -> Json<JsonValue> {
     let update = User {  ..user.into_inner() };
     Json(json!({
-        "success": User::update(id, update, &connection)
+        "success": User::update(Uuid::parse_str(&id).unwrap(), update, &connection)
     }))
 }
 
 #[delete("/<id>")]
 fn delete(id: String, connection: db::Connection) -> Json<JsonValue> {
     Json(json!({
-        "success": User::delete(id, &connection)
+        "success": User::delete(Uuid::parse_str(&id).unwrap(), &connection)
     }))
 }
 
@@ -75,14 +81,14 @@ fn sensitive(key: ApiKey) -> String {
 
 #[derive(Serialize, Deserialize)]
 struct Credentials {
-   id: String,
+   email: String,
    password: String
 }
 
 #[post("/login", data = "<credentials>")]
 fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<Json<JsonValue>, Status> {
     let header: Header = Default::default();
-    let username = credentials.id.to_string();
+    let email = credentials.email.to_string();
     let password = credentials.password.to_string();
     // Expiration of the token is set to two weeks
     let start = SystemTime::now();
@@ -90,14 +96,14 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
         .expect("Time went backwards");
     let two_weeks_from_now: u64 = since_the_epoch.as_secs() + 1209600 as u64;
 
-        match User::by_username_and_password(username, password, &connection) {
+        match User::by_email_and_password(email, password, &connection) {
         None => {
             Err(Status::NotFound)
         },
         Some(user) => {
             let claims = Registered {
                 exp: Some(two_weeks_from_now),
-                sub: Some(user.id.into()),
+                sub: Some(user.id.to_hyphenated().to_string()),
                 ..Default::default()
             };
             let token = Token::new(header, claims);
