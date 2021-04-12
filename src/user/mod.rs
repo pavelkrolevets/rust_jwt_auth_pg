@@ -8,6 +8,7 @@ use rocket::response::status;
 use rocket_contrib::json::Json;
 use rocket_contrib::json::JsonValue;
 use diesel::result::Error;
+use rocket_contrib::serve::{StaticFiles};
 use self::model::User;
 use super::db;
 use self::auth::ApiKey;
@@ -18,7 +19,6 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crypto::sha2::Sha256;
 use uuid::Uuid;
 use std::str;
-
 
 #[post("/register", format = "application/json", data = "<credentials>")]
 fn create(credentials: Json<Credentials>, connection: db::Connection) -> Result<status::Created<Json<User>>, Status> {
@@ -119,6 +119,7 @@ pub fn mount(rocket: rocket::Rocket) -> rocket::Rocket {
     rocket
         .mount("/user", routes![read_one,  create, update, delete, info, info_error, sensitive])
         .mount("/auth", routes![login])
+        .mount("/", StaticFiles::from("www"))
 }
 
 fn person_created(user: User) -> status::Created<Json<User>> {

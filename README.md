@@ -23,7 +23,13 @@ An example how to set up Rust server restful API with JWT authentication and ORM
     ```bash
     diesel migration run
     ``` 
-2. Compile the code and run
+2. Compile wasm front end
+    ```bash
+    cd www
+    wasm-pack build --target web
+    cd ..
+    ```
+3. Compile the code and run
     ```bash
     cargo run
     ```
