@@ -15,9 +15,11 @@ diesel = { version = "1.3.3", features = ["postgres", "r2d2", "uuidv07"] }
 dotenv = "0.15.0"
 r2d2-diesel = "1.0.0"
 r2d2 = "0.8.6"
-jwt = "0.4.0"
+jwt = "0.13.0"
 rust-crypto = "0.2.36"
 rustc-serialize = "0.3.24"
 rust-argon2 = "0.8.2"
 secstr = "0.4.0"
 uuid = { version = "0.8.2", features = ["serde", "v4"] }
+hmac = "0.10.1"
+sha2 = "0.9.3"

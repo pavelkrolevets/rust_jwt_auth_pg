@@ -519,12 +519,17 @@ checksum = "dd25036021b0de88a0aff6b850051563c6516d0bf53f8638938edbb9de732736"
 
 [[package]]
 name = "jwt"
-version = "0.4.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "caa2b51232f4dba9bcbdc082f4ea5bee58d5c2866770b4dc80c868d09bd82569"
+checksum = "86e46349d67dc03bdbdb28da0337a355a53ca1d5156452722c36fe21d0e6389b"
 dependencies = [
- "rust-crypto",
- "rustc-serialize",
+ "base64 0.13.0",
+ "crypto-mac",
+ "digest",
+ "hmac",
+ "serde",
+ "serde_json",
+ "sha2",
 ]
 
 [[package]]
@@ -1038,6 +1043,7 @@ version = "0.1.0"
 dependencies = [
  "diesel",
  "dotenv",
+ "hmac",
  "jwt",
  "r2d2",
  "r2d2-diesel",
@@ -1051,6 +1057,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+ "sha2",
  "uuid",
 ]
 
@@ -1104,6 +1111,9 @@ name = "serde"
 version = "1.0.123"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92d5161132722baa40d802cc70b15262b98258453e85e5d1d365c757c73869ae"
+dependencies = [
+ "serde_derive",
+]
 
 [[package]]
 name = "serde_derive"

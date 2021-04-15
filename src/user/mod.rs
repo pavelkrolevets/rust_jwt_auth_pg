@@ -1,6 +1,8 @@
 pub mod model;
 pub mod schema;
 pub mod auth;
+extern crate hmac;
+extern crate sha2;
 
 use rocket::*;
 use rocket::http::Status;
@@ -13,7 +15,10 @@ use self::model::User;
 use super::db;
 use self::auth::ApiKey;
 
-use jwt::{Header, Registered, Token};
+use hmac::{Hmac, NewMac};
+use jwt::{AlgorithmType, Header, SignWithKey, Token};
+use sha2::Sha384;
+use std::collections::BTreeMap;
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 use crypto::sha2::Sha256;
@@ -87,7 +92,11 @@ struct Credentials {
 
 #[post("/login", data = "<credentials>")]
 fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<Json<JsonValue>, Status> {
-    let header: Header = Default::default();
+    let header = Header {
+        algorithm: AlgorithmType::Hs384,
+        ..Default::default()
+    };
+    let key: Hmac<Sha384> = Hmac::new_varkey(b"some-secret").unwrap();
     let email = credentials.email.to_string();
     let password = credentials.password.to_string();
     // Expiration of the token is set to two weeks
@@ -101,15 +110,18 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
             Err(Status::NotFound)
         },
         Some(user) => {
-            let claims = Registered {
-                exp: Some(two_weeks_from_now),
-                sub: Some(user.id.to_hyphenated().to_string()),
-                ..Default::default()
-            };
+            // let claims = Registered {
+            //     exp: Some(two_weeks_from_now),
+            //     sub: Some(user.id.to_hyphenated().to_string()),
+            //     ..Default::default()
+            // };
+            let mut claims = BTreeMap::new();
+            claims.insert("sub", Some(user.id.to_hyphenated().to_string()));
+
             let token = Token::new(header, claims);
 
-            token.signed(b"secret_key", Sha256::new())
-                .map(|message| Json(json!({ "success": true, "token": message })))
+            token.sign_with_key(&key)
+                .map(|message| Json(json!({ "success": true, "token": message.as_str() })))
                 .map_err(|_| Status::InternalServerError)
         }
     }

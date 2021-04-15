@@ -3,15 +3,19 @@ use rocket::request::{self, Request, FromRequest};
 
 use crypto::sha2::Sha256;
 
-use jwt::{Header, Registered, Token};
+use hmac::{Hmac, NewMac};
+use jwt::{AlgorithmType, Header, Token, VerifyWithKey};
+use sha2::Sha384;
+use std::collections::BTreeMap;
 
 
 pub struct ApiKey(pub String);
 
-pub fn read_token(key: &str) -> Result<String, String> {
-    let token = Token::<Header, Registered>::parse(key)
+pub fn read_token(key_inc: &str) -> Result<String, String> {
+    let token = Token::<Header>::parse(key_inc)
         .map_err(|_| "Unable to parse key".to_string())?;
-    if token.verify(b"secret_key", Sha256::new()) {
+    let key: Hmac<Sha256> = Hmac::new_varkey(b"some-secret")?;
+    if token.verify_with_key(&key) {
         token.claims.sub.ok_or("Claims not valid".to_string())
     } else {
         Err("Token not valid".to_string())

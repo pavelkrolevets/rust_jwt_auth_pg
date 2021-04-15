@@ -12,6 +12,15 @@ use web_sys::HtmlButtonElement;
 use gloo::events::EventListener;
 use wasm_bindgen_futures::spawn_local;
 use json::JsonValue;
+use serde::{Deserialize, Serialize};
+// use json::*;
+use reqwest::Client;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Post {
+    email: String,
+    password: String,
+}
 
 // Called when the wasm module is instantiated
 #[wasm_bindgen(start)]
@@ -27,36 +36,46 @@ pub fn main() -> Result<(), JsValue> {
     let second_div = create_div(&document, "second_div", "col-md-6");
     
 
-    let input_box = create_input_box(&document, &String::from("login"));
-    first_div.append_child(&input_box)?;
+    let login_box = create_input_box(&document, &String::from("login"));
+    first_div.append_child(&login_box)?;
+
+    let password_box = create_input_box(&document, &String::from("password"));
+    first_div.append_child(&password_box)?;
     
     let ok_button = create_button(&document);
     first_div.append_child(&ok_button)?;
 
-    
     first_div.append_child(&second_div)?;
     body.append_child(&first_div)?;
 
     let on_click = EventListener::new(&ok_button, "click", move |_event| {
         let temp_d = second_div.clone();
-        let input_value = document
+        let login_value = document
             .get_element_by_id("login")
             .unwrap()
             .dyn_into::<HtmlInputElement>()
             .unwrap()
             .value();
-        let input_value: &'static _ = Box::leak(Box::new(input_value));
-       
+        let login_value: &'static _ = Box::leak(Box::new(login_value));
+        
+        let password_value = document
+            .get_element_by_id("password")
+            .unwrap()
+            .dyn_into::<HtmlInputElement>()
+            .unwrap()
+            .value();
+        let password_value: &'static _ = Box::leak(Box::new(password_value));
 
-        let response = get_response(&input_value);
+        // temp_d.set_inner_html(&password_value);
+        // temp_d.set_inner_html(&login_value);
+
+        let response = get_response(login_value.to_string(), password_value.to_string());
         spawn_local(async move {
             let parsed = response.await;
-            temp_d.set_inner_html(&parsed);
-        }
-
-        
+            let lat = (&parsed["token"]).to_owned().to_string();
+            temp_d.set_inner_html(&lat);
+        });
            
-        
     });
     
     on_click.forget();
@@ -98,16 +117,24 @@ fn create_div(document: &Document, id: &str, class: &str) -> Element {
 }
 
 // Get response from api
-async fn get_response(login: &str, password: &str) -> JsonValue {
+async fn get_response(login: String, password: String) -> JsonValue {
     let url = "http://127.0.0.1:8001/auth/login";
 
-    let params = [("email", &login), ("password", &password)];
-
-    let resp = reqwest::post(&url)
-        .form(&params)
+    let new_post = Post {
+        email: login,
+        password: password,
+    };
+    
+    let client = reqwest::Client::new();
+    let resp = client.post(url)
+        .json(&new_post)
+        .send()
         .await.unwrap()
         .text()
         .await.unwrap();
 
     json::parse(&resp).unwrap()
+    // let res = reqwest::get("http://httpbin.org/get").await.unwrap();
+    // let body = res.text().await.unwrap();
+    // json::parse(&body).unwrap()
 }
