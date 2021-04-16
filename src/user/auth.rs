@@ -1,7 +1,7 @@
 use rocket::Outcome;
 use rocket::request::{self, Request, FromRequest};
 
-use crypto::sha2::Sha256;
+// use crypto::sha2::Sha256;
 
 use hmac::{Hmac, NewMac};
 use jwt::{AlgorithmType, Header, Token, VerifyWithKey};
@@ -11,12 +11,20 @@ use std::collections::BTreeMap;
 
 pub struct ApiKey(pub String);
 
-pub fn read_token(key_inc: &str) -> Result<String, String> {
-    let token = Token::<Header>::parse(key_inc)
+pub fn read_token(incoming: &str) -> Result<String, String> {
+    let token_str = Token::parse_unverified(incoming)
         .map_err(|_| "Unable to parse key".to_string())?;
-    let key: Hmac<Sha256> = Hmac::new_varkey(b"some-secret")?;
-    if token.verify_with_key(&key) {
-        token.claims.sub.ok_or("Claims not valid".to_string())
+
+    let key: Hmac<Sha384> = Hmac::new_varkey(b"some-secret")
+        .map_err(|_| "Unable to parse key".to_string())?;
+    
+    let token: Token<Header, BTreeMap<String, String>, _> = token_str.verify_with_key(&key)
+        .map_err(|_| "Token not valid".to_string())?;
+    let header = token.header();
+    let claims = token.claims();
+
+    if header.algorithm == AlgorithmType::Hs384 {
+        Ok(claims["sub"].clone())
     } else {
         Err("Token not valid".to_string())
     }

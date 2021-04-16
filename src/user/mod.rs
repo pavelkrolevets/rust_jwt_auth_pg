@@ -21,7 +21,7 @@ use sha2::Sha384;
 use std::collections::BTreeMap;
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
-use crypto::sha2::Sha256;
+// use crypto::sha2::Sha256;
 use uuid::Uuid;
 use std::str;
 
@@ -92,11 +92,7 @@ struct Credentials {
 
 #[post("/login", data = "<credentials>")]
 fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<Json<JsonValue>, Status> {
-    let header = Header {
-        algorithm: AlgorithmType::Hs384,
-        ..Default::default()
-    };
-    let key: Hmac<Sha384> = Hmac::new_varkey(b"some-secret").unwrap();
+   
     let email = credentials.email.to_string();
     let password = credentials.password.to_string();
     // Expiration of the token is set to two weeks
@@ -115,6 +111,13 @@ fn login(credentials: Json<Credentials>, connection: db::Connection) ->  Result<
             //     sub: Some(user.id.to_hyphenated().to_string()),
             //     ..Default::default()
             // };
+
+            let key: Hmac<Sha384> = Hmac::new_varkey(b"some-secret").unwrap();
+            let header = Header {
+                algorithm: AlgorithmType::Hs384,
+                ..Default::default()
+            };
+
             let mut claims = BTreeMap::new();
             claims.insert("sub", Some(user.id.to_hyphenated().to_string()));
 
