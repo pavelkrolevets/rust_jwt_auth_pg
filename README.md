@@ -1,4 +1,4 @@
-## Rocket.rs + diesel.rs + Postgresql  - restful JWT auth API boilerplate
+## Rust WASM restful JWT auth API boilerplate: Rocket.rs + WASM + diesel.rs + Postgresql 
 
 An example how to set up Rust server restful API with JWT authentication and ORM under the hood.
 
@@ -33,6 +33,8 @@ An example how to set up Rust server restful API with JWT authentication and ORM
     ```bash
     cargo run
     ```
+
+4. Open WASM front-end at `localhost:8001`
 ###### If everything was installed right and compiles without errors you should see Rocekt server listening at http://localhost:8001
 
 ## API rout JWT protection
