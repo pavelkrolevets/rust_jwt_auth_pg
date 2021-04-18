@@ -69,7 +69,7 @@ pub fn main() -> Result<(), JsValue> {
         // temp_d.set_inner_html(&password_value);
         // temp_d.set_inner_html(&login_value);
 
-        let response = get_response(login_value.to_string(), password_value.to_string());
+        let response = login(login_value.to_string(), password_value.to_string());
         spawn_local(async move {
             let parsed = response.await;
             let lat = (&parsed["token"]).to_owned().to_string();
@@ -117,7 +117,7 @@ fn create_div(document: &Document, id: &str, class: &str) -> Element {
 }
 
 // Get response from api
-async fn get_response(login: String, password: String) -> JsonValue {
+async fn login(login: String, password: String) -> JsonValue {
     let url = "http://127.0.0.1:8001/auth/login";
 
     let new_post = Post {
@@ -126,15 +126,12 @@ async fn get_response(login: String, password: String) -> JsonValue {
     };
     
     let client = reqwest::Client::new();
-    let resp = client.post(url)
+    let req = client
+        .post(url)
         .json(&new_post)
-        .send()
-        .await.unwrap()
-        .text()
-        .await.unwrap();
-
-    json::parse(&resp).unwrap()
-    // let res = reqwest::get("http://httpbin.org/get").await.unwrap();
-    // let body = res.text().await.unwrap();
-    // json::parse(&body).unwrap()
+        .header("Accepts", "application/json");
+   
+    let resp = req.send().await.unwrap();
+    let body = resp.text().await.unwrap();
+    json::parse(&body).unwrap()
 }
